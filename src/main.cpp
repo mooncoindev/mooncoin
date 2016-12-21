@@ -2712,22 +2712,20 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
 
     int nHeight = pindexPrev->nHeight+1;
 
-	// Propz to the DarkCoin/Dash dev who corrected ABS bug for DGW below (baz)
 	if(nHeight >= 26850){
-		unsigned int nBitsNext = GetNextWorkRequired(pindexPrev, &block);
-		double n1 = ConvertBitsToDouble(block.nBits);
-		double n2 = ConvertBitsToDouble(nBitsNext);
-		if (abs(n1-n2) > n1*0.5){
-			return state.DoS(100, error("%s : incorrect proof of work - %f %f %f at %d", __func__, abs(n1-n2), n1, n2, nHeight),
-							REJECT_INVALID, "bad-diffbits");
-		}
-/* 		if (n1 != n2){ //GetNextWorkRequired(pindexPrev, &block), block.nBits != nBitsNext
-			// debug baz 17122016
-			return state.DoS(100, error("%s : incorrect proof of work at %d (is %d, should be %d)", __func__, nHeight, n1, n2),
-							REJECT_INVALID, "bad-diffbits");
-		} */
+			unsigned int nBitsNext = GetNextWorkRequired(pindexPrev, &block);
+			double n1 = ConvertBitsToDouble(block.nBits);
+			double n2 = ConvertBitsToDouble(nBitsNext);
+			if (abs(n1-n2) > n1*0.5){
+					return state.DoS(100, error("%s : incorrect proof of work (DGW pre-fork) - %f %f %f at %d", __func__, abs(n1-n2), n1, n2, nHeight),
+													REJECT_INVALID, "bad-diffbits");
+			}
+			if (block.nBits != GetNextWorkRequired(pindexPrev, &block)){
+					return state.DoS(100, error("%s : incorrect proof of work at %d", __func__, nHeight),
+													REJECT_INVALID, "bad-diffbits");
+			}
 	}
-    
+
     // Check timestamp against prev
     if (block.GetBlockTime() <= pindexPrev->GetMedianTimePast())
         return state.Invalid(error("%s : block's timestamp is too early", __func__),
@@ -2742,41 +2740,6 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
     CBlockIndex* pcheckpoint = Checkpoints::GetLastCheckpoint();
     if (pcheckpoint && nHeight < pcheckpoint->nHeight)
         return state.DoS(100, error("%s : forked chain older than last checkpoint (height %d)", __func__, nHeight));
-
-    //bool enforceV2 = false;
-    //if (block.nVersion < 2) 
-    //{
-    //    if (Params().EnforceV2AfterHeight() != -1)
-    //    {
-    //        // Mainnet 710k, Testnet 400k
-    //        if (nHeight >= Params().EnforceV2AfterHeight())
-    //            enforceV2 = true;
-    //    }
-    //    else
-    //    {
-    //        // Regtest and Unittest: use Bitcoin's supermajority rule
-    //        if (CBlockIndex::IsSuperMajority(2, pindexPrev, Params().RejectBlockOutdatedMajority()))
-    //            enforceV2 = true;
-    //    }
-    //}
-	//
-    //if (enforceV2)
-    //{
-    //    return state.Invalid(error("%s : rejected nVersion=1 block", __func__),
-    //                         REJECT_OBSOLETE, "bad-version");
-    //}
-	//
-    // Reject block.nVersion=2 blocks when 95% (75% on testnet) of the network has upgraded:
-    //if (block.nVersion < 3 && CBlockIndex::IsSuperMajority(3, pindexPrev, Params().RejectBlockOutdatedMajority()))
-    //{
-    //    return state.Invalid(error("%s : rejected nVersion=2 block", __func__),
-    //                         REJECT_OBSOLETE, "bad-version");
-    //}
-	//
-    // Reject block.nVersion=3 blocks when 95% (75% on testnet) of the network has upgraded:
-    //if (block.nVersion < 4 && CBlockIndex::IsSuperMajority(4, pindexPrev, Params().RejectBlockOutdatedMajority()))
-    //    return state.Invalid(error("%s : rejected nVersion=3 block", __func__),
-    //                         REJECT_OBSOLETE, "bad-version");
 
     return true;
 }
@@ -2854,8 +2817,8 @@ bool AcceptBlockHeader(const CBlockHeader& block, CValidationState& state, CBloc
             return state.DoS(100, error("%s : prev block invalid", __func__), REJECT_INVALID, "bad-prevblk");
     }
 
-    if (!ContextualCheckBlockHeader(block, state, pindexPrev))
-        return false;
+    //if (!ContextualCheckBlockHeader(block, state, pindexPrev))
+    //    return false;
 
     if (pindex == NULL)
         pindex = AddToBlockIndex(block);

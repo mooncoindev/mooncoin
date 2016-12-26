@@ -43,19 +43,13 @@ HelpMessageDialog::HelpMessageDialog(QWidget *parent, bool about) :
         setWindowTitle(tr("About Mooncoin Core"));
 
         /// HTML-format the license message from the core
-        QString licenseInfo = QString::fromStdString(LicenseInfo());
-        QString licenseInfoHTML = licenseInfo;
-        // Make URLs clickable
-        QRegExp uri("<(.*)>", Qt::CaseSensitive, QRegExp::RegExp2);
-        uri.setMinimal(true); // use non-greedy matching
-        licenseInfoHTML.replace(uri, "<a href=\"\\1\">\\1</a>");
-        // Replace newlines with HTML breaks
-        licenseInfoHTML.replace("\n\n", "<br><br>");
-
+        QString licenseInfoHTML;
+		QString devSignMsgHTML;
+		licenseInfoHTML = "<b>Mooncoin Core version v0.10.5.0-barrystyle</b><br>Copyright (C) 2013-2016 The Mooncoin Core Developers<br><br> This is experimental software. <br><br> Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php. <br><br> This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit https://www.openssl.org/ and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.<br><br><br>";
+		devSignMsgHTML  = "<b>Developer Signed Message:</b><br>https://github.com/mooncoindev<br>by J.Taylor, Bunbury, Western Australia<br>December, 2016<br><font size=-1><br>MOON address: 2DaMooNeT5PDPxwupTFiKoS7KZsFrsWJwd<br>Signature: HONb6Dh895fJPW4jDwHmKFwCke6vtUcD5RTY2g8UYftJFGfsf1jDznH8ill8X8jjURSd7eUAJvlGyOeAtYEafAw=</font>";
         ui->helpMessageLabel->setTextFormat(Qt::RichText);
         ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        text = version + "\n" + licenseInfo;
-        ui->helpMessageLabel->setText(version + "<br><br>" + licenseInfoHTML);
+        ui->helpMessageLabel->setText(licenseInfoHTML+devSignMsgHTML);
         ui->helpMessageLabel->setWordWrap(true);
     } else {
         setWindowTitle(tr("Command-line options"));

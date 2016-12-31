@@ -1,7 +1,7 @@
 Mooncoin Core 0.10 integration/staging tree
 ===========================================
 
-http://mooncoin.com/
+https://bitcointalk.org/index.php?topic=1733963.0
 
 What is Mooncoin?
 ----------------

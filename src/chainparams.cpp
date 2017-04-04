@@ -101,7 +101,7 @@ public:
         nMinerThreads = 0;
         nTargetTimespan = 8 * 60 * 60; // every 8 hours
         nTargetSpacing = 90; // moon (1.5 mins)
-        nMaxTipAge = 8 * 60 * 60;
+        nMaxTipAge = 90 * 24 * 60 * 60;
 
         /**
          * Build the genesis block. Note that the output of the genesis coinbase cannot

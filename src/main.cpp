@@ -1414,15 +1414,22 @@ bool IsInitialBlockDownload()
 {
     const CChainParams& chainParams = Params();
     LOCK(cs_main);
-    if (fImporting || fReindex || chainActive.Height() < Checkpoints::GetTotalBlocksEstimate())
+    if (fImporting || fReindex || chainActive.Height() < Checkpoints::GetTotalBlocksEstimate()){
+		//LogPrintf("IsInitialBlockDownload = true\n"); // debug
         return true;
+	}
     static bool lockIBDState = false;
-    if (lockIBDState)
+    if (lockIBDState){
+		//LogPrintf("IsInitialBlockDownload = false\n"); // debug
         return false;
+	}
     bool state = (chainActive.Height() < pindexBestHeader->nHeight - 24 * 6 ||
-			pindexBestHeader->GetBlockTime() < GetTime() - 24 * 60 * 60);
-    if (!state)
+			 pindexBestHeader->GetBlockTime() < GetTime() - chainParams.MaxTipAge()); // this is valid once chainParams set properly
+    if (!state){
         lockIBDState = true;
+		//LogPrintf("IsInitialBlockDownload (lockIBDState = true)\n"); // debug
+	}
+	//LogPrintf("IsInitialBlockDownload state %d\n", state); // debug
     return state;
 }
 

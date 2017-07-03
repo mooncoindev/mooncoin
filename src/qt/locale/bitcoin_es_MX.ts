@@ -910,7 +910,7 @@
     </message>
     <message>
         <source>Received with</source>
-        <translation>Recivido con</translation>
+        <translation>Recibido con</translation>
     </message>
     <message>
         <source>Sent to</source>
@@ -973,7 +973,7 @@
     </message>
     <message>
         <source>Received with</source>
-        <translation>Recivido con</translation>
+        <translation>Recibido con</translation>
     </message>
     <message>
         <source>Sent to</source>
